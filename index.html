@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAW — Bank-Grade Cross-Border Settlement Infrastructure</title>
+  <meta name="description" content="Institutional infrastructure for cross-border settlement. A programmable layer that standardizes B2B payment flows across regulated financial rails." />
+
+  <!-- Security & SEO meta -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="NAW — Bank-Grade Cross-Border Settlement Infrastructure" />
+  <meta property="og:description" content="Institutional infrastructure for cross-border settlement. A programmable layer that standardizes B2B payment flows across regulated financial rails." />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://nawpn.com/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- GSAP (SRI hashes from cdnjs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Lenis -->
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha512-iU75mTk9AqGsEqmsAupS/sejIWCdsxgDjeIFOOA9zgj8gi3ZNfJISd0FKhnmuKo4XuglcvL+iGd0mS2wA03zCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F5F3;
+      --surface: #FFFFFF;
+      --surface-2: #EFEFED;
+      --surface-dark: #1A1A1A;
+      --border: rgba(0,0,0,0.08);
+      --border-dark: rgba(255,255,255,0.08);
+      --text-primary: #0D0D0D;
+      --text-secondary: #6B6B6B;
+      --text-light: #F5F5F3;
+      --accent: #C8F400;
+      --accent-dark: #A8D000;
+      --font-head: 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    html { scroll-behavior: auto; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+
+    /* ─── UTILITY ────────────────────────────────────────── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+
+    /* Tags: light sections */
+    .tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 3px;
+      margin-bottom: 20px;
+    }
+    /* Tags: dark sections */
+    .tag-dark {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245,245,243,0.5);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-dark);
+      padding: 5px 12px;
+      border-radius: 3px;
+      margin-bottom: 20px;
+    }
+
+    .section-head {
+      font-family: var(--font-head);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+    .section-head-light {
+      font-family: var(--font-head);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 620px;
+    }
+    .section-sub-light {
+      font-size: 17px;
+      line-height: 1.7;
+      color: rgba(245,245,243,0.55);
+      max-width: 620px;
+    }
+
+    /* ─── BUTTONS ────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+    /* Primary: lime bg, black text — always */
+    .btn-primary {
+      background: var(--accent);
+      color: #0D0D0D;
+      border: 1px solid var(--accent);
+      box-shadow: 0 2px 12px rgba(200,244,0,0.2);
+    }
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(200,244,0,0.3);
+    }
+    /* Ghost on light sections */
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid rgba(0,0,0,0.2);
+    }
+    .btn-ghost:hover {
+      background: rgba(0,0,0,0.04);
+      border-color: rgba(0,0,0,0.35);
+      transform: translateY(-1px);
+    }
+    /* Ghost on dark sections */
+    .btn-ghost-dark {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid rgba(255,255,255,0.22);
+    }
+    .btn-ghost-dark:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.4);
+      transform: translateY(-1px);
+    }
+
+    /* ─── HEADER ─────────────────────────────────────────── */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-bottom 0.3s ease, box-shadow 0.3s ease;
+    }
+    #header.scrolled {
+      background: rgba(245,245,243,0.88);
+      backdrop-filter: blur(20px) saturate(1.6);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ─── LOGO ───────────────────────────────────────────── */
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+    }
+    .logo-svg { display: block; }
+
+    nav { display: flex; align-items: center; gap: 36px; }
+    nav a {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: color 0.18s;
+    }
+    nav a:hover { color: var(--text-primary); }
+    .header-cta { margin-left: 8px; }
+
+    /* ─── LANGUAGE TOGGLE ───────────────────────────────────── */
+    .lang-toggle {
+      font-size: 13.5px;
+      font-weight: 500;
+      font-family: var(--font-body);
+      letter-spacing: 0.01em;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: color 0.18s;
+    }
+    .lang-toggle:hover { color: var(--text-primary); }
+    .lang-toggle .lang-sep { opacity: 0.3; font-weight: 300; font-size: 12px; }
+    .lang-toggle .lang-opt { transition: color 0.18s; }
+    .lang-toggle .lang-opt.active { color: var(--text-primary); font-weight: 600; }
+    .lang-toggle-mobile { font-size: 15px; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--text-primary);
+      transition: all 0.2s;
+    }
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 68px; left: 0; right: 0;
+      background: rgba(245,245,243,0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 24px 32px;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 999;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    #hero {
+      background: var(--bg);
+      padding: 180px 0 120px;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--border);
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-headline {
+      font-family: var(--font-head);
+      font-size: clamp(36px, 5.5vw, 64px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+      max-width: 820px;
+    }
+    .hero-headline .word { display: inline-block; overflow: hidden; }
+    .hero-headline .word-inner { display: inline-block; }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin-bottom: 40px;
+    }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
+    .hero-trust {
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 0.01em;
+      padding-top: 8px;
+    }
+    .hero-trust strong { color: var(--text-primary); font-weight: 500; }
+
+    /* Hero SVG Diagram */
+    .hero-diagram {
+      margin-top: 80px;
+      position: relative;
+    }
+    .diagram-container {
+      background: var(--surface-dark);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 48px 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    .diagram-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(200,244,0,0.04) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .diagram-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245,245,243,0.35);
+      margin-bottom: 32px;
+    }
+    .diagram-svg { width: 100%; height: auto; display: block; }
+
+    /* ─── CREDIBILITY STRIP ──────────────────────────────── */
+    #credibility {
+      padding: 22px 0;
+      background: var(--surface-dark);
+    }
+    .cred-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    .cred-item {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(245,245,243,0.55);
+      letter-spacing: 0.02em;
+      padding: 6px 24px;
+      white-space: nowrap;
+    }
+    .cred-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ─── SECTIONS SHARED ────────────────────────────────── */
+    .section { padding: 100px 0; }
+    .section-header { margin-bottom: 60px; }
+    .reveal-up { opacity: 0; transform: translateY(32px); filter: blur(4px); }
+
+    /* ─── MOBILE: todo visible por defecto ───────────────── */
+    @media (max-width: 768px) {
+      .reveal-up {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        filter: none !important;
+      }
+      .section-head,
+      .section-head-light {
+        clip-path: none !important;
+      }
+      .arch-layer {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      #heroCanvas { display: none; }
+    }
+
+    /* ─── HERO CANVAS ────────────────────────────────────── */
+    #heroCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── CARD MOUSE-GLOW ────────────────────────────────── */
+    .card, .int-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .card > *, .int-card > * { position: relative; z-index: 1; }
+    .card-glow-overlay {
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.28s ease;
+    }
+
+    /* ─── TICKER / MARQUEE ───────────────────────────────── */
+    .ticker-outer {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    }
+    @keyframes ticker-move {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker-move 30s linear infinite;
+    }
+    .ticker-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 6px 0;
+    }
+
+    /* ─── KEYFRAMES ──────────────────────────────────────── */
+    @keyframes pulse-bg {
+      0%, 100% { opacity: 0.05; transform: translate(-50%, -50%) scale(1); }
+      50%       { opacity: 0.12; transform: translate(-50%, -50%) scale(1.14); }
+    }
+    #cta::before { animation: pulse-bg 4s ease-in-out infinite; }
+
+    @keyframes shine-sweep {
+      0%   { transform: translateX(-180%) skewX(-12deg); }
+      100% { transform: translateX(280%)  skewX(-12deg); }
+    }
+    .card-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 38%, rgba(200,244,0,0.05) 50%, transparent 62%);
+      pointer-events: none;
+      animation: shine-sweep 4s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    @keyframes border-breathe {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+    .diagram-container { animation: border-breathe 3s ease-in-out infinite; }
+
+
+    /* ─── WHAT NAW IS ────────────────────────────────────── */
+    #what { background: var(--surface-2); }
+    #what .what-body {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin-bottom: 60px;
+    }
+    .cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px 28px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.08);
+      border-color: rgba(0,0,0,0.14);
+    }
+    .card-icon {
+      width: 40px; height: 40px;
+      background: var(--surface-2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .card-icon svg { width: 20px; height: 20px; stroke: var(--text-primary); fill: none; stroke-width: 1.5; }
+    .card-title {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .card-desc {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    /* ─── HOW IT WORKS (redesigned) ─────────────────────── */
+    #how { background: var(--surface); }
+    .steps-v2 {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 60px;
+      max-width: 860px;
+    }
+    .step-v2 {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 0 24px;
+      position: relative;
+    }
+    /* left column: number + vertical line */
+    .step-v2-marker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 4px;
+    }
+    .step-v2-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .step-v2-num.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0D0D0D;
+      box-shadow: 0 0 20px rgba(200,244,0,0.4);
+    }
+    .step-v2-line {
+      width: 1px;
+      flex: 1;
+      min-height: 28px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+    /* right column: card */
+    .step-v2-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 12px;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .step-v2-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    }
+    .step-v2-card.active {
+      background: var(--surface-dark);
+      border: 1px solid rgba(200,244,0,0.25);
+      box-shadow: 0 0 40px rgba(200,244,0,0.08), 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .step-v2-card.active:hover {
+      transform: translateX(4px);
+      box-shadow: 0 0 40px rgba(200,244,0,0.14), 0 12px 40px rgba(0,0,0,0.2);
+    }
+    .step-v2-icon {
+      flex-shrink: 0;
+      width: 48px; height: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-v2-icon svg {
+      width: 22px; height: 22px;
+      stroke: var(--text-secondary);
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .step-v2-icon.active {
+      background: rgba(200,244,0,0.12);
+      border-color: rgba(200,244,0,0.3);
+    }
+    .step-v2-icon.active svg { stroke: var(--accent); }
+    .step-v2-label-active {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .step-v2-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .step-v2-card.active .step-v2-title { color: var(--text-light); }
+    .step-v2-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+    .step-v2-card.active .step-v2-desc { color: rgba(245,245,243,0.55); }
+    .step-v2-body { flex: 1; }
+    @media (max-width: 600px) {
+      .step-v2-card { flex-direction: column; gap: 14px; }
+      .steps-v2 { max-width: 100%; }
+    }
+
+    /* ─── WHY INSTITUTIONS ───────────────────────────────── */
+    #why { background: var(--bg); }
+    #why .cards-6 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 60px;
+    }
+    #why .card { padding: 28px 24px; }
+    #why .card-title { font-size: 16px; }
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    /* ─── USE CASES ──────────────────────────────────────── */
+    #usecases { background: var(--surface-dark); }
+    #usecases .cards-5 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 60px;
+    }
+    #usecases .cards-5 .card:nth-child(4) { grid-column: 1; }
+    #usecases .cards-5 .card:nth-child(5) { grid-column: 2; }
+    /* dark cards for use cases */
+    #usecases .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-dark);
+    }
+    #usecases .card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+    }
+    #usecases .card-title { color: var(--text-light); }
+    #usecases .card-desc { color: rgba(245,245,243,0.5); }
+    #usecases .card-tag { color: rgba(245,245,243,0.3); }
+
+    /* ─── ARCHITECTURE ───────────────────────────────────── */
+    #arch { background: var(--surface); }
+    .arch-body {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 60px;
+    }
+    .arch-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 820px;
+    }
+    .arch-layer {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(0,0,0,0.12);
+      border-radius: 8px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .arch-layer:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    }
+    .arch-layer:nth-child(1) { margin-left: 0; }
+    .arch-layer:nth-child(2) { margin-left: 24px; }
+    .arch-layer:nth-child(3) { margin-left: 48px; }
+    .arch-layer:nth-child(4) { margin-left: 72px; border-left-color: var(--accent); }
+    .arch-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      opacity: 0.6;
+      min-width: 24px;
+      padding-top: 2px;
+    }
+    .arch-title {
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .arch-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── DIFFERENTIATION (redesigned) ──────────────────── */
+    #diff { background: var(--surface-2); }
+    .diff-vs {
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr;
+      gap: 0;
+      margin-top: 60px;
+      align-items: start;
+    }
+    .diff-side {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .diff-old {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .diff-naw {
+      background: var(--surface-dark);
+      border: 1px solid rgba(200,244,0,0.2);
+      box-shadow: 0 0 48px rgba(200,244,0,0.06);
+    }
+    .diff-side-head {
+      padding: 20px 24px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .diff-naw .diff-side-head { border-bottom-color: rgba(255,255,255,0.08); }
+    .diff-side-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .diff-side-icon.old { background: rgba(0,0,0,0.05); }
+    .diff-side-icon.naw { background: rgba(200,244,0,0.12); }
+    .diff-side-icon svg { width: 16px; height: 16px; }
+    .diff-side-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .diff-old .diff-side-label { color: var(--text-secondary); }
+    .diff-naw .diff-side-label { color: var(--accent); }
+    .diff-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.18s;
+    }
+    .diff-naw .diff-row { border-bottom-color: rgba(255,255,255,0.06); }
+    .diff-row:last-child { border-bottom: none; }
+    .diff-old .diff-row:hover { background: rgba(0,0,0,0.015); }
+    .diff-naw .diff-row:hover { background: rgba(255,255,255,0.03); }
+    .diff-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .diff-icon.x-mark {
+      background: rgba(0,0,0,0.06);
+    }
+    .diff-icon.x-mark::before,
+    .diff-icon.x-mark::after {
+      content: '';
+      position: absolute;
+      width: 8px; height: 1.5px;
+      background: rgba(0,0,0,0.28);
+      border-radius: 1px;
+    }
+    .diff-icon.x-mark::before { transform: rotate(45deg); }
+    .diff-icon.x-mark::after  { transform: rotate(-45deg); }
+    .diff-icon.check {
+      background: rgba(200,244,0,0.14);
+    }
+    .diff-icon.check::after {
+      content: '';
+      position: absolute;
+      width: 5px; height: 9px;
+      border-right: 1.5px solid var(--accent);
+      border-bottom: 1.5px solid var(--accent);
+      transform: rotate(42deg) translate(-1px, -2px);
+    }
+    .diff-row-text {
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .diff-old .diff-row-text { color: var(--text-secondary); }
+    .diff-naw .diff-row-text { color: rgba(245,245,243,0.82); font-weight: 500; }
+    /* VS badge in the middle column */
+    .diff-vs-sep {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 60px;
+    }
+    .diff-vs-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 9px;
+    }
+    @media (max-width: 700px) {
+      .diff-vs { grid-template-columns: 1fr; gap: 16px; }
+      .diff-vs-sep { display: none; }
+    }
+
+    /* ─── GOVERNANCE ─────────────────────────────────────── */
+    #gov { background: var(--surface-dark); }
+    .gov-items {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 60px;
+      max-width: 720px;
+    }
+    .gov-item {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 24px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-dark);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      transition: transform 0.22s, box-shadow 0.22s;
+    }
+    .gov-item:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .gov-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .gov-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    /* ─── INTEGRATION MODEL ──────────────────────────────── */
+    #integration { background: var(--surface); }
+    #integration .cards-3 { margin-top: 60px; }
+    .int-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px 28px;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .int-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.07);
+      border-color: rgba(0,0,0,0.14);
+    }
+    .int-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+    }
+    .int-title {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .int-desc {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    /* ─── CLOSING CTA ────────────────────────────────────── */
+    #cta {
+      background: var(--surface-dark);
+      padding: 120px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse at center, rgba(200,244,0,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-box {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+    .cta-headline {
+      font-family: var(--font-head);
+      font-size: clamp(26px, 4vw, 44px);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    .cta-body {
+      font-size: 17px;
+      line-height: 1.7;
+      color: rgba(245,245,243,0.5);
+      max-width: 600px;
+      margin: 0 auto 44px;
+    }
+    .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    #footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 28px 0;
+      background: #0D0D0D;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+    }
+    .footer-logo .dot { color: var(--accent); }
+    .footer-copy {
+      font-size: 13px;
+      color: rgba(245,245,243,0.35);
+    }
+    .footer-email a {
+      font-size: 13px;
+      color: rgba(245,245,243,0.35);
+      text-decoration: none;
+      transition: color 0.18s;
+    }
+    .footer-email a:hover { color: var(--accent); }
+
+    /* ─── DIAGRAM FLOW (hero) ────────────────────────────── */
+    .diagram-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+      overflow-x: auto;
+      padding: 8px 4px;
+    }
+    .dnode {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 20px 18px;
+      min-width: 108px;
+      position: relative;
+      transition: background 0.22s, border-color 0.22s, transform 0.22s;
+      cursor: default;
+    }
+    .dnode:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.13);
+      transform: translateY(-2px);
+    }
+    .dnode-active {
+      background: rgba(200,244,0,0.06);
+      border-color: rgba(200,244,0,0.3);
+      box-shadow: 0 0 32px rgba(200,244,0,0.1);
+    }
+    .dnode-active:hover {
+      background: rgba(200,244,0,0.1);
+      border-color: rgba(200,244,0,0.45);
+      transform: translateY(-2px);
+    }
+    .dnode-glow {
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: radial-gradient(ellipse at center, rgba(200,244,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      animation: pulse-node 3s ease-in-out infinite;
+    }
+    @keyframes pulse-node {
+      0%,100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    .dnode-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dnode-icon svg { width: 18px; height: 18px; }
+    .dnode-icon.active {
+      background: rgba(200,244,0,0.12);
+      border-color: rgba(200,244,0,0.3);
+    }
+    .dnode-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(245,245,243,0.3);
+      letter-spacing: 0.08em;
+    }
+    .dnode-num.active { color: var(--accent); }
+    .dnode-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(245,245,243,0.65);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .dnode-label.active { color: rgba(245,245,243,0.95); }
+    /* Connectors */
+    .dconn {
+      flex: 1;
+      min-width: 32px;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+    }
+    .dconn-line {
+      width: 100%;
+      height: 1px;
+      background: rgba(200,244,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .dconn-pulse {
+      position: absolute;
+      top: -2px;
+      width: 32px; height: 5px;
+      background: linear-gradient(90deg, transparent, rgba(200,244,0,0.8), transparent);
+      border-radius: 4px;
+      animation: pulse-travel 2.4s linear infinite;
+    }
+    @keyframes pulse-travel {
+      0%   { left: -32px; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { left: calc(100% + 32px); opacity: 0; }
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .cards-3 { grid-template-columns: 1fr 1fr; }
+      #why .cards-6 { grid-template-columns: 1fr 1fr; }
+      .steps-flow { grid-template-columns: 1fr 1fr; gap: 16px; }
+      #usecases .cards-5 { grid-template-columns: 1fr 1fr; }
+      #usecases .cards-5 .card:nth-child(4) { grid-column: auto; }
+      #usecases .cards-5 .card:nth-child(5) { grid-column: auto; }
+      .arch-layer:nth-child(2),
+      .arch-layer:nth-child(3),
+      .arch-layer:nth-child(4) { margin-left: 0; }
+    }
+    @media (max-width: 700px) {
+      .container { padding: 0 20px; }
+      nav { display: none; }
+      .header-cta { display: none; }
+      .hamburger { display: flex; }
+      .cards-3 { grid-template-columns: 1fr; }
+      #why .cards-6 { grid-template-columns: 1fr; }
+      .steps-flow { grid-template-columns: 1fr; }
+      #usecases .cards-5 { grid-template-columns: 1fr; }
+      .diff-table { font-size: 13px; }
+      .diff-table thead tr th,
+      .diff-table tbody tr td { padding: 12px 14px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .hero-ctas { flex-direction: column; }
+      .hero-ctas .btn { width: fit-content; }
+      .cta-btns { flex-direction: column; align-items: center; }
+    }
+    @media (max-width: 520px) {
+      #hero { padding: 140px 0 80px; }
+      .section { padding: 72px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ──────────────────────────────────────────── -->
+<header id="header">
+  <div class="header-inner">
+    <!-- Logo: N + lime trapezoid (light bg variant) -->
+    <a href="#" class="logo" aria-label="NAW">
+      <svg class="logo-svg" width="66" height="38" viewBox="0 0 66 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="32" font-family="Inter, sans-serif" font-size="34" font-weight="900" fill="#0D0D0D">N</text>
+        <path d="M 36 22 L 52 22 L 54 33 L 34 33 Z" fill="#C8F400"/>
+      </svg>
+    </a>
+    <nav>
+      <a href="#what" data-i18n="nav-platform">Platform</a>
+      <a href="#arch" data-i18n="nav-arch">Architecture</a>
+      <a href="#usecases" data-i18n="nav-usecases">Use Cases</a>
+      <a href="#integration" data-i18n="nav-integration">Integration</a>
+      <button class="lang-toggle" id="langToggle" aria-label="Switch language">
+        <span class="lang-opt active" id="langEN">EN</span>
+        <span class="lang-sep">/</span>
+        <span class="lang-opt" id="langES">ES</span>
+      </button>
+    </nav>
+    <a href="mailto:Comercial@usenaw.com" rel="noopener" class="btn btn-primary header-cta" data-i18n="header-cta">Contact Our Team</a>
+    <div class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#what" class="mobile-link" data-i18n="nav-platform">Platform</a>
+    <a href="#arch" class="mobile-link" data-i18n="nav-arch">Architecture</a>
+    <a href="#usecases" class="mobile-link" data-i18n="nav-usecases">Use Cases</a>
+    <a href="#integration" class="mobile-link" data-i18n="nav-integration">Integration</a>
+    <button class="lang-toggle lang-toggle-mobile" id="mobileLangToggle" aria-label="Switch language">
+      <span class="lang-opt" id="mobileLangEN">EN</span>
+      <span class="lang-sep">/</span>
+      <span class="lang-opt" id="mobileLangES">ES</span>
+    </button>
+    <a href="mailto:Comercial@usenaw.com" rel="noopener" class="btn btn-primary" style="width:fit-content;margin-top:4px;" data-i18n="header-cta">Contact Our Team</a>
+  </div>
+</header>
+
+<!-- ─── HERO ────────────────────────────────────────────── -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="container">
+    <div class="hero-content">
+      <div class="tag reveal-up" data-i18n="hero-tag">Institutional Infrastructure</div>
+      <h1 class="hero-headline" id="heroHead" data-i18n="hero-headline">
+        The Bank-Grade Control Plane for Cross-Border Settlement
+      </h1>
+      <p class="hero-sub reveal-up" data-i18n="hero-sub">
+        NAW enables regulated institutions to orchestrate cross-border value movement with greater control, visibility and execution quality across stablecoin and fiat-based workflows.
+      </p>
+      <div class="hero-ctas reveal-up">
+        <a href="mailto:Comercial@usenaw.com" rel="noopener" class="btn btn-primary" data-i18n="hero-cta2">Contact Our Team</a>
+      </div>
+      <p class="hero-trust reveal-up" data-i18n="hero-trust">
+        <strong>Built for banks, financial institutions, payment platforms and enterprise treasury teams.</strong>
+      </p>
+    </div>
+
+    <div class="hero-diagram reveal-up">
+      <div class="diagram-container">
+        <div class="diagram-label" data-i18n="diagram-label">Execution flow: NAW orchestration layer</div>
+        <div class="diagram-flow" id="diagramFlow">
+
+          <!-- Node 1 -->
+          <div class="dnode">
+            <div class="dnode-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="rgba(245,245,243,0.5)" stroke-width="1.5">
+                <path d="M4 4h8l4 4v8H4V4z"/><path d="M12 4v4h4"/>
+              </svg>
+            </div>
+            <div class="dnode-num">01</div>
+            <div class="dnode-label" data-i18n="dnode1-label">Instruction<br>Intake</div>
+          </div>
+
+          <!-- Connector 1 -->
+          <div class="dconn"><div class="dconn-line"><div class="dconn-pulse"></div></div></div>
+
+          <!-- Node 2 -->
+          <div class="dnode">
+            <div class="dnode-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="rgba(245,245,243,0.5)" stroke-width="1.5">
+                <path d="M10 2.5L2.5 6v4c0 3.5 3.2 6.8 7.5 7.5 4.3-.7 7.5-4 7.5-7.5V6L10 2.5z"/><path d="M7 10l2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="dnode-num">02</div>
+            <div class="dnode-label" data-i18n="dnode2-label">Policy<br>Engine</div>
+          </div>
+
+          <!-- Connector 2 -->
+          <div class="dconn"><div class="dconn-line"><div class="dconn-pulse" style="animation-delay:0.4s"></div></div></div>
+
+          <!-- Node 3 — ACTIVE (Routing) -->
+          <div class="dnode dnode-active">
+            <div class="dnode-glow"></div>
+            <div class="dnode-icon active">
+              <svg viewBox="0 0 20 20" fill="none" stroke="#C8F400" stroke-width="1.5">
+                <circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.42 1.42M13.65 13.65l1.42 1.42M4.93 15.07l1.42-1.42M13.65 6.35l1.42-1.42"/>
+              </svg>
+            </div>
+            <div class="dnode-num active">03</div>
+            <div class="dnode-label active" data-i18n="dnode3-label">Routing<br>Logic</div>
+          </div>
+
+          <!-- Connector 3 -->
+          <div class="dconn"><div class="dconn-line"><div class="dconn-pulse" style="animation-delay:0.8s"></div></div></div>
+
+          <!-- Node 4 -->
+          <div class="dnode">
+            <div class="dnode-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="rgba(245,245,243,0.5)" stroke-width="1.5">
+                <path d="M5 14V5m0 0L2 8m3-3l3 3M15 6v9m0 0l3-3m-3 3l-3-3"/>
+              </svg>
+            </div>
+            <div class="dnode-num">04</div>
+            <div class="dnode-label" data-i18n="dnode4-label">Settlement</div>
+          </div>
+
+          <!-- Connector 4 -->
+          <div class="dconn"><div class="dconn-line"><div class="dconn-pulse" style="animation-delay:1.2s"></div></div></div>
+
+          <!-- Node 5 -->
+          <div class="dnode">
+            <div class="dnode-icon">
+              <svg viewBox="0 0 20 20" fill="none" stroke="rgba(245,245,243,0.5)" stroke-width="1.5">
+                <path d="M7.5 4H5a1 1 0 00-1 1v11a1 1 0 001 1h10a1 1 0 001-1V5a1 1 0 00-1-1h-2.5M7.5 4a1 1 0 011-1h3a1 1 0 011 1m-5 0h5M7 11l2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="dnode-num">05</div>
+            <div class="dnode-label" data-i18n="dnode5-label">Reconciliation</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CREDIBILITY TICKER ────────────────────────────────── -->
+<div id="credibility">
+  <div class="ticker-outer">
+    <div class="ticker-track">
+      <!-- First copy -->
+      <div class="ticker-inner">
+        <span class="cred-item">Policy-driven orchestration</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Stablecoin &amp; fiat workflows</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Standardized financial messaging</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Reconciliation by design</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Enterprise-ready integration</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Bank-grade settlement infrastructure</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Cross-border execution quality</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Institutional governance controls</span>
+        <div class="cred-dot"></div>
+      </div>
+      <!-- Duplicate for seamless loop -->
+      <div class="ticker-inner" aria-hidden="true">
+        <span class="cred-item">Policy-driven orchestration</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Stablecoin &amp; fiat workflows</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Standardized financial messaging</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Reconciliation by design</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Enterprise-ready integration</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Bank-grade settlement infrastructure</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Cross-border execution quality</span>
+        <div class="cred-dot"></div>
+        <span class="cred-item">Institutional governance controls</span>
+        <div class="cred-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── WHAT NAW IS ──────────────────────────────────────── -->
+<section id="what" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag reveal-up" data-i18n="what-tag">Platform</div>
+      <h2 class="section-head reveal-up" data-i18n="what-heading">A Control Plane for Modern Cross-Border Money Movement</h2>
+    </div>
+    <p class="what-body reveal-up" data-i18n="what-body">
+      NAW provides the orchestration layer institutions need to manage complex cross-border flows across stablecoin liquidity, fiat settlement environments and partner infrastructure. Rather than replacing core systems, NAW sits above execution workflows to improve control, decisioning, traceability and operational efficiency.
+    </p>
+    <div class="cards-3">
+      <div class="card reveal-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="card-title" data-i18n="what-c1-title">Control</div>
+        <div class="card-desc" data-i18n="what-c1-desc">Centralized governance of cross-border workflows. Define rules, permissions and operational logic once, applied consistently across every transaction.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <div class="card-title" data-i18n="what-c2-title">Execution</div>
+        <div class="card-desc" data-i18n="what-c2-desc">Coordinate value movement across stablecoin and fiat environments. NAW handles routing, counterparty coordination and transaction state from instruction to closure.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="card-title" data-i18n="what-c3-title">Visibility</div>
+        <div class="card-desc" data-i18n="what-c3-desc">Every event normalized, recorded and surfaced. Operational teams gain structured insight into transaction state, audit trails and reconciliation data.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─────────────────────────────────────── -->
+<section id="how" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag reveal-up" data-i18n="how-tag">How It Works</div>
+      <h2 class="section-head reveal-up" data-i18n="how-heading">Orchestrated from Instruction to Closure</h2>
+      <p class="section-sub reveal-up" data-i18n="how-sub">NAW standardizes the operational layer behind cross-border execution.</p>
+    </div>
+
+    <div class="steps-v2">
+
+      <!-- Step 01 -->
+      <div class="step-v2 reveal-up">
+        <div class="step-v2-marker">
+          <div class="step-v2-num">01</div>
+          <div class="step-v2-line"></div>
+        </div>
+        <div class="step-v2-card">
+          <div class="step-v2-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="step-v2-body">
+            <div class="step-v2-title" data-i18n="how-s1-title">Instruction Intake</div>
+            <div class="step-v2-desc" data-i18n="how-s1-desc">Payment or settlement instructions enter through API, platform workflows or operational channels.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 02 -->
+      <div class="step-v2 reveal-up">
+        <div class="step-v2-marker">
+          <div class="step-v2-num">02</div>
+          <div class="step-v2-line"></div>
+        </div>
+        <div class="step-v2-card">
+          <div class="step-v2-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <div class="step-v2-body">
+            <div class="step-v2-title" data-i18n="how-s2-title">Policy &amp; Validation</div>
+            <div class="step-v2-desc" data-i18n="how-s2-desc">Rules, permissions, formatting, approvals and transaction conditions are applied at the point of entry.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 03 — ACTIVE (Core Engine) -->
+      <div class="step-v2 reveal-up">
+        <div class="step-v2-marker">
+          <div class="step-v2-num active">03</div>
+          <div class="step-v2-line"></div>
+        </div>
+        <div class="step-v2-card active">
+          <div class="step-v2-icon active">
+            <svg viewBox="0 0 24 24"><path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+          </div>
+          <div class="step-v2-body">
+            <div class="step-v2-label-active" data-i18n="how-s3-label">Core Engine</div>
+            <div class="step-v2-title" data-i18n="how-s3-title">Routing &amp; Execution Logic</div>
+            <div class="step-v2-desc" data-i18n="how-s3-desc">NAW determines the optimal path based on configured logic, counterparties and operational constraints.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 04 -->
+      <div class="step-v2 reveal-up">
+        <div class="step-v2-marker">
+          <div class="step-v2-num">04</div>
+          <div class="step-v2-line"></div>
+        </div>
+        <div class="step-v2-card">
+          <div class="step-v2-icon">
+            <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+          </div>
+          <div class="step-v2-body">
+            <div class="step-v2-title" data-i18n="how-s4-title">Settlement Coordination</div>
+            <div class="step-v2-desc" data-i18n="how-s4-desc">The platform coordinates value movement across stablecoin and fiat-based environments with precision.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 05 — last, no line -->
+      <div class="step-v2 reveal-up">
+        <div class="step-v2-marker">
+          <div class="step-v2-num">05</div>
+        </div>
+        <div class="step-v2-card">
+          <div class="step-v2-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          </div>
+          <div class="step-v2-body">
+            <div class="step-v2-title" data-i18n="how-s5-title">Reconciliation &amp; Audit</div>
+            <div class="step-v2-desc" data-i18n="how-s5-desc">Every event is recorded, normalized and surfaced for transparency, reporting and operational control.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHY INSTITUTIONS CHOOSE NAW ─────────────────────── -->
+<section id="why" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag reveal-up" data-i18n="why-tag">Value Proposition</div>
+      <h2 class="section-head reveal-up" data-i18n="why-heading">Why Institutional Teams Choose NAW</h2>
+    </div>
+    <div class="cards-6">
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="why-c1-tag">Operations</div>
+        <div class="card-title" data-i18n="why-c1-title">Operational Control</div>
+        <div class="card-desc" data-i18n="why-c1-desc">Move from fragmented manual execution to centralized workflow governance across all cross-border operations.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="why-c2-tag">Flexibility</div>
+        <div class="card-title" data-i18n="why-c2-title">Execution Flexibility</div>
+        <div class="card-desc" data-i18n="why-c2-desc">Support stablecoin-enabled and fiat-linked processes within one unified operating layer.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="why-c3-tag">Governance</div>
+        <div class="card-title" data-i18n="why-c3-title">Policy-Driven Infrastructure</div>
+        <div class="card-desc" data-i18n="why-c3-desc">Apply internal rules, approvals and routing logic with consistency across every transaction and workflow.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="why-c4-tag">Reconciliation</div>
+        <div class="card-title" data-i18n="why-c4-title">Clear Reconciliation</div>
+        <div class="card-desc" data-i18n="why-c4-desc">Reduce operational ambiguity with structured transaction records and full event visibility from initiation to closure.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="why-c5-tag">Deployment</div>
+        <div class="card-title" data-i18n="why-c5-title">Enterprise Deployment</div>
+        <div class="card-desc" data-i18n="why-c5-desc">Integrate through APIs and structured workflows without rebuilding or replacing core institutional systems.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="why-c6-tag">Onboarding</div>
+        <div class="card-title" data-i18n="why-c6-title">Faster Institutional Onboarding</div>
+        <div class="card-desc" data-i18n="why-c6-desc">Accelerate operational readiness with a platform designed for real-world financial operations and institutional requirements.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── USE CASES ────────────────────────────────────────── -->
+<section id="usecases" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag-dark reveal-up" data-i18n="uc-tag">Use Cases</div>
+      <h2 class="section-head-light reveal-up" data-i18n="uc-heading">Built for High-Value Institutional Workflows</h2>
+    </div>
+    <div class="cards-5">
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="uc-c1-tag">Payables</div>
+        <div class="card-title" data-i18n="uc-c1-title">Cross-border supplier payments</div>
+        <div class="card-desc" data-i18n="uc-c1-desc">Coordinate global payables execution with greater operational control and end-to-end visibility across jurisdictions.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="uc-c2-tag">Treasury</div>
+        <div class="card-title" data-i18n="uc-c2-title">Enterprise treasury flows</div>
+        <div class="card-desc" data-i18n="uc-c2-desc">Support treasury operations requiring structured movement across jurisdictions, currencies and institutional counterparties.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="uc-c3-tag">Settlement</div>
+        <div class="card-title" data-i18n="uc-c3-title">Institutional settlement operations</div>
+        <div class="card-desc" data-i18n="uc-c3-desc">Enable multi-party execution processes with clearer routing, state management and reconciliation capabilities.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="uc-c4-tag">Disbursements</div>
+        <div class="card-title" data-i18n="uc-c4-title">Payout and disbursement infrastructure</div>
+        <div class="card-desc" data-i18n="uc-c4-desc">Orchestrate large-scale outbound flows through institution-ready operational logic and structured execution frameworks.</div>
+      </div>
+      <div class="card reveal-up">
+        <div class="card-tag" data-i18n="uc-c5-tag">Stablecoin</div>
+        <div class="card-title" data-i18n="uc-c5-title">Stablecoin-enabled financial workflows</div>
+        <div class="card-desc" data-i18n="uc-c5-desc">Use stablecoin liquidity within controlled, institution-oriented execution frameworks built for regulated environments.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ARCHITECTURE ─────────────────────────────────────── -->
+<section id="arch" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag reveal-up" data-i18n="arch-tag">Architecture</div>
+      <h2 class="section-head reveal-up" data-i18n="arch-heading">Infrastructure Designed as an Execution Layer</h2>
+    </div>
+    <p class="arch-body reveal-up" data-i18n="arch-body">
+      NAW is built to operate as a programmable execution layer within institutional environments, sitting above existing core systems to add structure, governance and operational intelligence to cross-border workflows.
+    </p>
+    <div class="arch-layers" id="archLayers">
+      <div class="arch-layer">
+        <div class="arch-num">L1</div>
+        <div class="arch-content">
+          <div class="arch-title" data-i18n="arch-l1-title">Integration Layer</div>
+          <div class="arch-desc" data-i18n="arch-l1-desc">APIs and structured connectivity for institutional environments. Designed for secure, low-friction integration with existing core banking and payment infrastructure.</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-num">L2</div>
+        <div class="arch-content">
+          <div class="arch-title" data-i18n="arch-l2-title">Decision Layer</div>
+          <div class="arch-desc" data-i18n="arch-l2-desc">Rules, policies, approvals and execution conditions applied consistently at the point of processing. Configurable to institution-specific governance requirements.</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-num">L3</div>
+        <div class="arch-content">
+          <div class="arch-title" data-i18n="arch-l3-title">Coordination Layer</div>
+          <div class="arch-desc" data-i18n="arch-l3-desc">Routing logic, counterparty coordination and transaction state management. NAW maintains execution integrity across multi-leg and multi-party flows.</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-num">L4</div>
+        <div class="arch-content">
+          <div class="arch-title" data-i18n="arch-l4-title">Control Layer</div>
+          <div class="arch-desc" data-i18n="arch-l4-desc">Monitoring, reconciliation, reporting and operational oversight. Every transaction state surfaced with the clarity institutional operations demand.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DIFFERENTIATION ──────────────────────────────────── -->
+<section id="diff" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag reveal-up" data-i18n="diff-tag">Differentiation</div>
+      <h2 class="section-head reveal-up" data-i18n="diff-heading">More Than Payment Processing</h2>
+      <p class="section-sub reveal-up" data-i18n="diff-sub">NAW is not designed as a simple transaction pass-through. It gives institutions a control framework for how cross-border transactions are structured, governed, routed and closed.</p>
+    </div>
+    <div class="diff-vs">
+
+      <!-- Traditional Providers -->
+      <div class="diff-side diff-old">
+        <div class="diff-side-head">
+          <div class="diff-side-icon old" style="position:relative">
+            <svg viewBox="0 0 16 16" fill="none" style="width:14px;height:14px;stroke:rgba(0,0,0,0.35);stroke-width:1.5">
+              <path d="M4 4l8 8M12 4l-8 8"/>
+            </svg>
+          </div>
+          <span class="diff-side-label" data-i18n="diff-old-label">Traditional Providers</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon x-mark" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-old-r1">Simple transmission</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon x-mark" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-old-r2">Limited workflow control</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon x-mark" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-old-r3">Fragmented reconciliation</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon x-mark" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-old-r4">Logic outside operating layer</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon x-mark" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-old-r5">Fragmented visibility</span>
+        </div>
+      </div>
+
+      <!-- VS separator -->
+      <div class="diff-vs-sep">
+        <div class="diff-vs-pill">VS</div>
+      </div>
+
+      <!-- NAW -->
+      <div class="diff-side diff-naw">
+        <div class="diff-side-head">
+          <div class="diff-side-icon naw" style="position:relative">
+            <svg viewBox="0 0 16 16" fill="none" style="width:14px;height:14px;stroke:#C8F400;stroke-width:1.5">
+              <path d="M2.5 8l4 4 7-7"/>
+            </svg>
+          </div>
+          <span class="diff-side-label" data-i18n="diff-naw-label">NAW</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon check" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-naw-r1">Orchestrated execution framework</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon check" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-naw-r2">Policy-based control throughout the transaction lifecycle</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon check" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-naw-r3">Unified transaction handling and structured event records</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon check" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-naw-r4">Built-in operational logic at every execution stage</span>
+        </div>
+        <div class="diff-row reveal-up">
+          <div class="diff-icon check" style="position:relative"></div>
+          <span class="diff-row-text" data-i18n="diff-naw-r5">Traceable state from initiation to closure</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── GOVERNANCE ───────────────────────────────────────── -->
+<section id="gov" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag-dark reveal-up" data-i18n="gov-tag">Governance</div>
+      <h2 class="section-head-light reveal-up" data-i18n="gov-heading">Built With Governance in Mind</h2>
+      <p class="section-sub-light reveal-up" data-i18n="gov-sub">Institutional cross-border operations demand structured controls, permissioning, data consistency and operational traceability.</p>
+    </div>
+    <div class="gov-items">
+      <div class="gov-item reveal-up">
+        <div class="gov-dot"></div>
+        <div class="gov-text" data-i18n="gov-i1">Role-based access and permissions</div>
+      </div>
+      <div class="gov-item reveal-up">
+        <div class="gov-dot"></div>
+        <div class="gov-text" data-i18n="gov-i2">Workflow governance controls</div>
+      </div>
+      <div class="gov-item reveal-up">
+        <div class="gov-dot"></div>
+        <div class="gov-text" data-i18n="gov-i3">Standardized transaction data</div>
+      </div>
+      <div class="gov-item reveal-up">
+        <div class="gov-dot"></div>
+        <div class="gov-text" data-i18n="gov-i4">Audit-ready event trails</div>
+      </div>
+      <div class="gov-item reveal-up">
+        <div class="gov-dot"></div>
+        <div class="gov-text" data-i18n="gov-i5">Operational transparency across execution steps</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INTEGRATION MODEL ────────────────────────────────── -->
+<section id="integration" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="tag reveal-up" data-i18n="int-tag">Integration</div>
+      <h2 class="section-head reveal-up" data-i18n="int-heading">Deployable Within Existing Institutional Environments</h2>
+      <p class="section-sub reveal-up" data-i18n="int-sub">NAW is designed to add an orchestration layer to existing infrastructure, not replace it.</p>
+    </div>
+    <div class="cards-3">
+      <div class="int-card reveal-up">
+        <div class="int-num">01</div>
+        <div class="int-title" data-i18n="int-c1-title">API Integration</div>
+        <div class="int-desc" data-i18n="int-c1-desc">Connect through structured APIs built for institutional environments. Secure, well-documented and designed for integration with core banking, payment and treasury systems.</div>
+      </div>
+      <div class="int-card reveal-up">
+        <div class="int-num">02</div>
+        <div class="int-title" data-i18n="int-c2-title">Operational Workflow Layer</div>
+        <div class="int-desc" data-i18n="int-c2-desc">Configure operational workflows, routing policies and governance logic without re-engineering underlying infrastructure. NAW sits cleanly above execution systems.</div>
+      </div>
+      <div class="int-card reveal-up">
+        <div class="int-num">03</div>
+        <div class="int-title" data-i18n="int-c3-title">Structured Deployment Support</div>
+        <div class="int-desc" data-i18n="int-c3-desc">Purpose-built onboarding and deployment processes designed for institutions with complex operational requirements and existing partner ecosystems.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CLOSING CTA ──────────────────────────────────────── -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-box reveal-up">
+      <div class="tag-dark" style="margin: 0 auto 24px;" data-i18n="cta-tag">Get Started</div>
+      <h2 class="cta-headline" data-i18n="cta-headline">
+        Modern cross-border infrastructure needs more than connectivity. It needs control.
+      </h2>
+      <p class="cta-body" data-i18n="cta-body">
+        NAW gives institutions a bank-grade operating layer for orchestrating stablecoin and fiat-linked cross-border workflows with more structure, more visibility and better execution discipline.
+      </p>
+      <div class="cta-btns">
+        <a href="mailto:Comercial@usenaw.com" rel="noopener" class="btn btn-primary" data-i18n="cta-btn1">Contact Our Team</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────────────────── -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <!-- Logo: N + lime trapezoid (dark bg variant) -->
+        <svg width="66" height="38" viewBox="0 0 66 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="32" font-family="Inter, sans-serif" font-size="34" font-weight="900" fill="#FFFFFF">N</text>
+          <path d="M 36 22 L 52 22 L 54 33 L 34 33 Z" fill="#C8F400"/>
+        </svg>
+      </div>
+      <div class="footer-copy" data-i18n="footer-copy">© 2025 NAW. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ─── LENIS SMOOTH SCROLL ─────────────────────────────── */
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  let lenis;
+  if (!isMobile) {
+    lenis = new Lenis({
+      duration: 1.2,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  /* ─── HEADER FROST ────────────────────────────────────── */
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 30);
+  }, { passive: true });
+
+  /* ─── HAMBURGER ───────────────────────────────────────── */
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => mobileNav.classList.toggle('open'));
+  document.querySelectorAll('.mobile-link').forEach(l => {
+    l.addEventListener('click', () => mobileNav.classList.remove('open'));
+  });
+
+  /* ─── GSAP REGISTER ───────────────────────────────────── */
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ─── HERO CANVAS: GRID + LIME LIGHT PARTICLES ───────── */
+  /* Inspired by 21st.dev "Grid Hero Animated" component     */
+  (function initHeroCanvas() {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const GRID = 56;
+    const particles = [];
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width  = canvas.offsetWidth  * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      ctx.scale(dpr, dpr);
+    }
+
+    function makeParticle() {
+      const W = canvas.offsetWidth, H = canvas.offsetHeight;
+      const horiz = Math.random() > 0.5;
+      if (horiz) {
+        const y = Math.round(Math.random() * Math.floor(H / GRID)) * GRID;
+        return { x: 0, y, tx: W, p: 0, sp: 0.28 + Math.random() * 0.5, dir: 'h' };
+      } else {
+        const x = Math.round(Math.random() * Math.floor(W / GRID)) * GRID;
+        return { x, y: 0, ty: H, p: 0, sp: 0.2 + Math.random() * 0.38, dir: 'v' };
+      }
+    }
+
+    let lastT = 0;
+    function frame(ts) {
+      const dt = Math.min(ts - lastT, 50); lastT = ts;
+      const W = canvas.offsetWidth, H = canvas.offsetHeight;
+      ctx.clearRect(0, 0, W, H);
+
+      /* grid lines */
+      ctx.strokeStyle = 'rgba(13,13,13,0.055)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= W; x += GRID) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (let y = 0; y <= H; y += GRID) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+
+      /* particles */
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.p += p.sp * dt * 0.00045;
+        const cx = p.dir === 'h' ? p.p * p.tx : p.x;
+        const cy = p.dir === 'v' ? p.p * p.ty : p.y;
+        if (p.p >= 1) { particles.splice(i, 1); continue; }
+
+        const TRAIL = 90;
+        let grd;
+        if (p.dir === 'h') {
+          grd = ctx.createLinearGradient(Math.max(0, cx - TRAIL), cy, cx, cy);
+        } else {
+          grd = ctx.createLinearGradient(cx, Math.max(0, cy - TRAIL), cx, cy);
+        }
+        grd.addColorStop(0, 'rgba(200,244,0,0)');
+        grd.addColorStop(1, 'rgba(200,244,0,0.5)');
+        ctx.strokeStyle = grd;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        if (p.dir === 'h') {
+          ctx.moveTo(Math.max(0, cx - TRAIL), cy); ctx.lineTo(cx, cy);
+        } else {
+          ctx.moveTo(cx, Math.max(0, cy - TRAIL)); ctx.lineTo(cx, cy);
+        }
+        ctx.stroke();
+
+        /* glowing head dot */
+        const hg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 12);
+        hg.addColorStop(0, 'rgba(200,244,0,0.75)');
+        hg.addColorStop(1, 'rgba(200,244,0,0)');
+        ctx.fillStyle = hg;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (Math.random() < 0.028 && particles.length < 8) particles.push(makeParticle());
+      requestAnimationFrame(frame);
+    }
+
+    resize();
+    requestAnimationFrame(frame);
+    window.addEventListener('resize', resize, { passive: true });
+  })();
+
+  /* ─── CARD MOUSE-GLOW ─────────────────────────────────── */
+  /* Inspired by 21st.dev "Glowing border on Hover Card"     */
+  document.querySelectorAll('.card, .int-card').forEach(card => {
+    const glow = document.createElement('div');
+    glow.className = 'card-glow-overlay';
+    card.insertBefore(glow, card.firstChild);
+
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      glow.style.opacity = '1';
+      glow.style.background =
+        `radial-gradient(circle 150px at ${x}px ${y}px, rgba(200,244,0,0.13), transparent 68%)`;
+    });
+    card.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+  });
+
+  /* ─── GOV ITEM MOUSE-GLOW ─────────────────────────────── */
+  document.querySelectorAll('.gov-item').forEach(item => {
+    item.addEventListener('mousemove', e => {
+      const r = item.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      item.style.background =
+        `radial-gradient(circle 200px at ${x}px ${y}px, rgba(200,244,0,0.07) 0%, rgba(255,255,255,0.04) 65%)`;
+    });
+    item.addEventListener('mouseleave', () => {
+      item.style.background = 'rgba(255,255,255,0.04)';
+    });
+  });
+
+  /* ─── ADD SHINE TO DARK USE-CASE CARDS ───────────────── */
+  document.querySelectorAll('#usecases .card').forEach(card => {
+    const shine = document.createElement('div');
+    shine.className = 'card-shine';
+    card.appendChild(shine);
+    const delay = (Math.random() * 2).toFixed(2) + 's';
+    shine.style.animationDelay = delay;
+  });
+
+  /* ─── HERO HEADLINE WORD REVEAL ───────────────────────── */
+  const heroHead = document.getElementById('heroHead');
+  const words = heroHead.textContent.trim().split(/\s+/);
+  heroHead.textContent = '';
+  words.forEach((w, i) => {
+    if (i > 0) heroHead.appendChild(document.createTextNode(' '));
+    const outer = document.createElement('span');
+    outer.className = 'word';
+    const inner = document.createElement('span');
+    inner.className = 'word-inner';
+    inner.textContent = w;
+    outer.appendChild(inner);
+    heroHead.appendChild(outer);
+  });
+
+  gsap.fromTo('.word-inner', {
+    y: '115%', opacity: 0, rotationX: -40,
+  }, {
+    y: '0%', opacity: 1, rotationX: 0,
+    duration: 0.88, ease: 'expo.out',
+    stagger: 0.055, delay: 0.15,
+    transformOrigin: 'top center',
+    transformPerspective: 600,
+  });
+
+  /* ─── HERO ELEMENTS STAGGER ───────────────────────────── */
+  if (!isMobile) {
+    gsap.fromTo('#hero .reveal-up', {
+      opacity: 0, y: 32, filter: 'blur(6px)',
+    }, {
+      opacity: 1, y: 0, filter: 'blur(0px)',
+      duration: 0.9, ease: 'power3.out',
+      stagger: 0.13, delay: 0.68,
+    });
+    /* ─── HERO DIAGRAM NODES (initial) ───────────────────── */
+    gsap.fromTo('.dnode', {
+      opacity: 0, y: 16,
+    }, {
+      opacity: 1, y: 0,
+      duration: 0.55, ease: 'back.out(1.3)',
+      stagger: 0.1, delay: 1.1,
+    });
+  }
+
+  /* ─── SCROLL REVEAL: GENERAL ─────────────────────────── */
+  const revealStart = isMobile ? 'top bottom' : 'top 91%';
+  document.querySelectorAll('.section .reveal-up, #cta .reveal-up').forEach(el => {
+    // Section headings get a special clip-path wipe
+    if (el.classList.contains('section-head') || el.classList.contains('section-head-light')) {
+      if (!isMobile) {
+        gsap.set(el, { clipPath: 'inset(0 100% 0 0)', opacity: 1, y: 0, filter: 'blur(0px)' });
+        gsap.to(el, {
+          clipPath: 'inset(0 0% 0 0)',
+          duration: 1.05, ease: 'power4.inOut',
+          scrollTrigger: { trigger: el, start: revealStart, once: true },
+        });
+      }
+    } else {
+      gsap.fromTo(el, {
+        opacity: 0, y: 36, filter: 'blur(5px)',
+      }, {
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        duration: 0.82, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: revealStart, once: true },
+      });
+    }
+  });
+
+  /* ─── DIAGRAM FLOW ENTRANCE ───────────────────────────── */
+  if (!isMobile) {
+    gsap.fromTo('.dnode', {
+      opacity: 0, y: 20, scale: 0.92,
+    }, {
+      opacity: 1, y: 0, scale: 1,
+      duration: 0.6, ease: 'back.out(1.4)',
+      stagger: 0.1,
+      scrollTrigger: { trigger: '#diagramFlow', start: 'top bottom', once: true },
+    });
+    gsap.fromTo('.dconn', {
+      opacity: 0,
+    }, {
+      opacity: 1, duration: 0.4,
+      stagger: 0.1,
+      scrollTrigger: { trigger: '#diagramFlow', start: 'top bottom', once: true },
+      delay: 0.5,
+    });
+  }
+
+  /* ─── STEP ITEMS STAGGER ──────────────────────────────── */
+  gsap.fromTo('.step-v2', {
+    opacity: 0, x: isMobile ? 0 : -20, filter: 'blur(4px)',
+  }, {
+    opacity: 1, x: 0, filter: 'blur(0px)',
+    duration: 0.65, ease: 'power3.out',
+    stagger: 0.11,
+    scrollTrigger: { trigger: '.steps-v2', start: 'top bottom', once: true },
+  });
+
+  /* ─── ARCHITECTURE LAYERS ─────────────────────────────── */
+  gsap.fromTo('#archLayers .arch-layer', {
+    opacity: 0, x: isMobile ? 0 : -32, filter: 'blur(4px)',
+  }, {
+    opacity: 1, x: 0, filter: 'blur(0px)',
+    duration: 0.72, ease: 'power3.out',
+    stagger: 0.16,
+    scrollTrigger: { trigger: '#archLayers', start: 'top bottom', once: true },
+  });
+
+  /* ─── USE CASE CARDS ──────────────────────────────────── */
+  gsap.fromTo('#usecases .card', {
+    opacity: 0, y: 32, scale: 0.96,
+  }, {
+    opacity: 1, y: 0, scale: 1,
+    duration: 0.72, ease: 'power3.out',
+    stagger: 0.1,
+    scrollTrigger: { trigger: '#usecases .cards-5', start: 'top bottom', once: true },
+  });
+
+  /* ─── WHY CARDS ───────────────────────────────────────── */
+  gsap.fromTo('#why .card', {
+    opacity: 0, y: 28, scale: 0.96,
+  }, {
+    opacity: 1, y: 0, scale: 1,
+    duration: 0.68, ease: 'power3.out',
+    stagger: 0.09,
+    scrollTrigger: { trigger: '#why .cards-6', start: 'top bottom', once: true },
+  });
+
+  /* ─── DIFF ROWS STAGGER ───────────────────────────────── */
+  gsap.fromTo('#diff .diff-old .diff-row', {
+    opacity: 0, x: isMobile ? 0 : -20, filter: 'blur(3px)',
+  }, {
+    opacity: 1, x: 0, filter: 'blur(0px)',
+    duration: 0.5, ease: 'power2.out',
+    stagger: 0.08,
+    scrollTrigger: { trigger: '.diff-vs', start: 'top bottom', once: true },
+  });
+  gsap.fromTo('#diff .diff-naw .diff-row', {
+    opacity: 0, x: isMobile ? 0 : 20, filter: 'blur(3px)',
+  }, {
+    opacity: 1, x: 0, filter: 'blur(0px)',
+    duration: 0.5, ease: 'power2.out',
+    stagger: 0.08,
+    scrollTrigger: { trigger: '.diff-vs', start: 'top bottom', once: true },
+    delay: 0.1,
+  });
+
+  /* ─── GOV ITEMS ───────────────────────────────────────── */
+  gsap.fromTo('#gov .gov-item', {
+    opacity: 0, x: isMobile ? 0 : -26, filter: 'blur(3px)',
+  }, {
+    opacity: 1, x: 0, filter: 'blur(0px)',
+    duration: 0.62, ease: 'power3.out',
+    stagger: 0.11,
+    scrollTrigger: { trigger: '#gov .gov-items', start: 'top bottom', once: true },
+  });
+
+  /* ─── CREDIBILITY TICKER FADE-IN ──────────────────────── */
+  gsap.fromTo('#credibility', {
+    opacity: 0,
+  }, {
+    opacity: 1, duration: 0.6,
+    scrollTrigger: { trigger: '#credibility', start: 'top bottom', once: true },
+  });
+
+  /* ─── CTA HEADLINE CHAR STAGGER ──────────────────────── */
+  const ctaHead = document.querySelector('.cta-headline');
+  if (ctaHead && !isMobile) {
+    const ctaWords = ctaHead.textContent.trim().split(/\s+/);
+    ctaHead.textContent = '';
+    ctaWords.forEach((w, i) => {
+      if (i > 0) ctaHead.appendChild(document.createTextNode(' '));
+      const outer = document.createElement('span');
+      outer.style.display = 'inline-block';
+      outer.style.overflow = 'hidden';
+      const inner = document.createElement('span');
+      inner.className = 'cta-word-inner';
+      inner.style.display = 'inline-block';
+      inner.textContent = w;
+      outer.appendChild(inner);
+      ctaHead.appendChild(outer);
+    });
+    gsap.fromTo('.cta-word-inner', {
+      y: '105%', opacity: 0,
+    }, {
+      y: '0%', opacity: 1,
+      duration: 0.72, ease: 'expo.out',
+      stagger: 0.04,
+      scrollTrigger: { trigger: '#cta', start: 'top bottom', once: true },
+    });
+  }
+
+  /* ─── SCROLL TRIGGER REFRESH ──────────────────────────── */
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+
+  /* ─── I18N TRANSLATIONS ───────────────────────────────── */
+  const translations = {
+    en: {
+      'nav-platform': 'Platform',
+      'nav-arch': 'Architecture',
+      'nav-usecases': 'Use Cases',
+      'nav-integration': 'Integration',
+      'header-cta': 'Contact Our Team',
+      'hero-tag': 'Institutional Infrastructure',
+      'hero-headline': 'The Bank-Grade Control Plane for Cross-Border Settlement',
+      'hero-sub': 'NAW enables regulated institutions to orchestrate cross-border value movement with greater control, visibility and execution quality across stablecoin and fiat-based workflows.',
+      'hero-cta1': 'Contact Our Team',
+      'hero-cta2': 'Contact Our Team',
+      'hero-trust': '<strong>Built for banks, financial institutions, payment platforms and enterprise treasury teams.</strong>',
+      'diagram-label': 'Execution flow: NAW orchestration layer',
+      'dnode1-label': 'Instruction<br>Intake',
+      'dnode2-label': 'Policy<br>Engine',
+      'dnode3-label': 'Routing<br>Logic',
+      'dnode4-label': 'Settlement',
+      'dnode5-label': 'Reconciliation',
+      'what-tag': 'Platform',
+      'what-heading': 'A Control Plane for Modern Cross-Border Money Movement',
+      'what-body': 'NAW provides the orchestration layer institutions need to manage complex cross-border flows across stablecoin liquidity, fiat settlement environments and partner infrastructure. Rather than replacing core systems, NAW sits above execution workflows to improve control, decisioning, traceability and operational efficiency.',
+      'what-c1-title': 'Control',
+      'what-c1-desc': 'Centralized governance of cross-border workflows. Define rules, permissions and operational logic once, applied consistently across every transaction.',
+      'what-c2-title': 'Execution',
+      'what-c2-desc': 'Coordinate value movement across stablecoin and fiat environments. NAW handles routing, counterparty coordination and transaction state from instruction to closure.',
+      'what-c3-title': 'Visibility',
+      'what-c3-desc': 'Every event normalized, recorded and surfaced. Operational teams gain structured insight into transaction state, audit trails and reconciliation data.',
+      'how-tag': 'How It Works',
+      'how-heading': 'Orchestrated from Instruction to Closure',
+      'how-sub': 'NAW standardizes the operational layer behind cross-border execution.',
+      'how-s1-title': 'Instruction Intake',
+      'how-s1-desc': 'Payment or settlement instructions enter through API, platform workflows or operational channels.',
+      'how-s2-title': 'Policy &amp; Validation',
+      'how-s2-desc': 'Rules, permissions, formatting, approvals and transaction conditions are applied at the point of entry.',
+      'how-s3-label': 'Core Engine',
+      'how-s3-title': 'Routing &amp; Execution Logic',
+      'how-s3-desc': 'NAW determines the optimal path based on configured logic, counterparties and operational constraints.',
+      'how-s4-title': 'Settlement Coordination',
+      'how-s4-desc': 'The platform coordinates value movement across stablecoin and fiat-based environments with precision.',
+      'how-s5-title': 'Reconciliation &amp; Audit',
+      'how-s5-desc': 'Every event is recorded, normalized and surfaced for transparency, reporting and operational control.',
+      'why-tag': 'Value Proposition',
+      'why-heading': 'Why Institutional Teams Choose NAW',
+      'why-c1-tag': 'Operations', 'why-c1-title': 'Operational Control',
+      'why-c1-desc': 'Move from fragmented manual execution to centralized workflow governance across all cross-border operations.',
+      'why-c2-tag': 'Flexibility', 'why-c2-title': 'Execution Flexibility',
+      'why-c2-desc': 'Support stablecoin-enabled and fiat-linked processes within one unified operating layer.',
+      'why-c3-tag': 'Governance', 'why-c3-title': 'Policy-Driven Infrastructure',
+      'why-c3-desc': 'Apply internal rules, approvals and routing logic with consistency across every transaction and workflow.',
+      'why-c4-tag': 'Reconciliation', 'why-c4-title': 'Clear Reconciliation',
+      'why-c4-desc': 'Reduce operational ambiguity with structured transaction records and full event visibility from initiation to closure.',
+      'why-c5-tag': 'Deployment', 'why-c5-title': 'Enterprise Deployment',
+      'why-c5-desc': 'Integrate through APIs and structured workflows without rebuilding or replacing core institutional systems.',
+      'why-c6-tag': 'Onboarding', 'why-c6-title': 'Faster Institutional Onboarding',
+      'why-c6-desc': 'Accelerate operational readiness with a platform designed for real-world financial operations and institutional requirements.',
+      'uc-tag': 'Use Cases',
+      'uc-heading': 'Built for High-Value Institutional Workflows',
+      'uc-c1-tag': 'Payables', 'uc-c1-title': 'Cross-border supplier payments',
+      'uc-c1-desc': 'Coordinate global payables execution with greater operational control and end-to-end visibility across jurisdictions.',
+      'uc-c2-tag': 'Treasury', 'uc-c2-title': 'Enterprise treasury flows',
+      'uc-c2-desc': 'Support treasury operations requiring structured movement across jurisdictions, currencies and institutional counterparties.',
+      'uc-c3-tag': 'Settlement', 'uc-c3-title': 'Institutional settlement operations',
+      'uc-c3-desc': 'Enable multi-party execution processes with clearer routing, state management and reconciliation capabilities.',
+      'uc-c4-tag': 'Disbursements', 'uc-c4-title': 'Payout and disbursement infrastructure',
+      'uc-c4-desc': 'Orchestrate large-scale outbound flows through institution-ready operational logic and structured execution frameworks.',
+      'uc-c5-tag': 'Stablecoin', 'uc-c5-title': 'Stablecoin-enabled financial workflows',
+      'uc-c5-desc': 'Use stablecoin liquidity within controlled, institution-oriented execution frameworks built for regulated environments.',
+      'arch-tag': 'Architecture',
+      'arch-heading': 'Infrastructure Designed as an Execution Layer',
+      'arch-body': 'NAW is built to operate as a programmable execution layer within institutional environments, sitting above existing core systems to add structure, governance and operational intelligence to cross-border workflows.',
+      'arch-l1-title': 'Integration Layer',
+      'arch-l1-desc': 'APIs and structured connectivity for institutional environments. Designed for secure, low-friction integration with existing core banking and payment infrastructure.',
+      'arch-l2-title': 'Decision Layer',
+      'arch-l2-desc': 'Rules, policies, approvals and execution conditions applied consistently at the point of processing. Configurable to institution-specific governance requirements.',
+      'arch-l3-title': 'Coordination Layer',
+      'arch-l3-desc': 'Routing logic, counterparty coordination and transaction state management. NAW maintains execution integrity across multi-leg and multi-party flows.',
+      'arch-l4-title': 'Control Layer',
+      'arch-l4-desc': 'Monitoring, reconciliation, reporting and operational oversight. Every transaction state surfaced with the clarity institutional operations demand.',
+      'diff-tag': 'Differentiation',
+      'diff-heading': 'More Than Payment Processing',
+      'diff-sub': 'NAW is not designed as a simple transaction pass-through. It gives institutions a control framework for how cross-border transactions are structured, governed, routed and closed.',
+      'diff-old-label': 'Traditional Providers',
+      'diff-old-r1': 'Simple transmission',
+      'diff-old-r2': 'Limited workflow control',
+      'diff-old-r3': 'Fragmented reconciliation',
+      'diff-old-r4': 'Logic outside operating layer',
+      'diff-old-r5': 'Fragmented visibility',
+      'diff-naw-label': 'NAW',
+      'diff-naw-r1': 'Orchestrated execution framework',
+      'diff-naw-r2': 'Policy-based control throughout the transaction lifecycle',
+      'diff-naw-r3': 'Unified transaction handling and structured event records',
+      'diff-naw-r4': 'Built-in operational logic at every execution stage',
+      'diff-naw-r5': 'Traceable state from initiation to closure',
+      'gov-tag': 'Governance',
+      'gov-heading': 'Built With Governance in Mind',
+      'gov-sub': 'Institutional cross-border operations demand structured controls, permissioning, data consistency and operational traceability.',
+      'gov-i1': 'Role-based access and permissions',
+      'gov-i2': 'Workflow governance controls',
+      'gov-i3': 'Standardized transaction data',
+      'gov-i4': 'Audit-ready event trails',
+      'gov-i5': 'Operational transparency across execution steps',
+      'int-tag': 'Integration',
+      'int-heading': 'Deployable Within Existing Institutional Environments',
+      'int-sub': 'NAW is designed to add an orchestration layer to existing infrastructure, not replace it.',
+      'int-c1-title': 'API Integration',
+      'int-c1-desc': 'Connect through structured APIs built for institutional environments. Secure, well-documented and designed for integration with core banking, payment and treasury systems.',
+      'int-c2-title': 'Operational Workflow Layer',
+      'int-c2-desc': 'Configure operational workflows, routing policies and governance logic without re-engineering underlying infrastructure. NAW sits cleanly above execution systems.',
+      'int-c3-title': 'Structured Deployment Support',
+      'int-c3-desc': 'Purpose-built onboarding and deployment processes designed for institutions with complex operational requirements and existing partner ecosystems.',
+      'cta-tag': 'Get Started',
+      'cta-headline': 'Modern cross-border infrastructure needs more than connectivity. It needs control.',
+      'cta-body': 'NAW gives institutions a bank-grade operating layer for orchestrating stablecoin and fiat-linked cross-border workflows with more structure, more visibility and better execution discipline.',
+      'cta-btn1': 'Contact Our Team',
+      'cta-btn2': 'Contact Our Team',
+      'footer-copy': '© 2025 NAW. All rights reserved.',
+    },
+    es: {
+      'nav-platform': 'Plataforma',
+      'nav-arch': 'Arquitectura',
+      'nav-usecases': 'Casos de Uso',
+      'nav-integration': 'Integración',
+      'header-cta': 'Contacta con el Equipo',
+      'hero-tag': 'Infraestructura Institucional',
+      'hero-headline': 'El Núcleo Operativo de Control Bancario para la Liquidación Transfronteriza',
+      'hero-sub': 'NAW permite a instituciones reguladas orquestar movimientos de valor transfronterizos con mayor control, visibilidad y calidad de ejecución en flujos de stablecoins y moneda fiat.',
+      'hero-cta1': 'Contacta con el Equipo',
+      'hero-cta2': 'Contacta con el Equipo',
+      'hero-trust': '<strong>Diseñado para bancos, instituciones financieras, plataformas de pago y equipos de tesorería empresarial.</strong>',
+      'diagram-label': 'Flujo de ejecución: capa de orquestación NAW',
+      'dnode1-label': 'Recepción<br>de Instrucción',
+      'dnode2-label': 'Motor de<br>Políticas',
+      'dnode3-label': 'Lógica de<br>Enrutamiento',
+      'dnode4-label': 'Liquidación',
+      'dnode5-label': 'Conciliación',
+      'what-tag': 'Plataforma',
+      'what-heading': 'Un Plano de Control para el Movimiento de Dinero Transfronterizo Moderno',
+      'what-body': 'NAW proporciona la capa de orquestación que las instituciones necesitan para gestionar flujos transfronterizos complejos en liquidez de stablecoins, entornos de liquidación fiat e infraestructura de socios. En lugar de reemplazar sistemas centrales, NAW se sitúa sobre los flujos de ejecución para mejorar el control, la trazabilidad y la eficiencia operacional.',
+      'what-c1-title': 'Control',
+      'what-c1-desc': 'Gobernanza centralizada de flujos transfronterizos. Define reglas, permisos y lógica operativa una vez, aplicados de forma consistente en cada transacción.',
+      'what-c2-title': 'Ejecución',
+      'what-c2-desc': 'Coordina el movimiento de valor en entornos de stablecoins y fiat. NAW gestiona el enrutamiento, coordinación de contrapartes y estado de transacciones desde la instrucción hasta el cierre.',
+      'what-c3-title': 'Visibilidad',
+      'what-c3-desc': 'Cada evento normalizado, registrado y visible. Los equipos operativos obtienen información estructurada sobre el estado de las transacciones, trazas de auditoría y datos de conciliación.',
+      'how-tag': 'Cómo Funciona',
+      'how-heading': 'Orquestado desde la Instrucción hasta el Cierre',
+      'how-sub': 'NAW estandariza la capa operacional detrás de la ejecución transfronteriza.',
+      'how-s1-title': 'Recepción de Instrucciones',
+      'how-s1-desc': 'Las instrucciones de pago o liquidación ingresan a través de API, flujos de plataforma o canales operacionales.',
+      'how-s2-title': 'Política y Validación',
+      'how-s2-desc': 'Reglas, permisos, formatos, aprobaciones y condiciones de transacción se aplican en el punto de entrada.',
+      'how-s3-label': 'Motor Central',
+      'how-s3-title': 'Enrutamiento y Lógica de Ejecución',
+      'how-s3-desc': 'NAW determina la ruta óptima según la lógica configurada, contrapartes y restricciones operacionales.',
+      'how-s4-title': 'Coordinación de Liquidación',
+      'how-s4-desc': 'La plataforma coordina el movimiento de valor en entornos de stablecoins y fiat con precisión.',
+      'how-s5-title': 'Conciliación y Auditoría',
+      'how-s5-desc': 'Cada evento es registrado, normalizado y visible para transparencia, informes y control operacional.',
+      'why-tag': 'Propuesta de Valor',
+      'why-heading': 'Por Qué los Equipos Institucionales Eligen NAW',
+      'why-c1-tag': 'Operaciones', 'why-c1-title': 'Control Operacional',
+      'why-c1-desc': 'Pasa de la ejecución manual fragmentada a la gobernanza centralizada de flujos de trabajo en todas las operaciones transfronterizas.',
+      'why-c2-tag': 'Flexibilidad', 'why-c2-title': 'Flexibilidad de Ejecución',
+      'why-c2-desc': 'Soporta procesos habilitados con stablecoins y vinculados a fiat dentro de una capa operativa unificada.',
+      'why-c3-tag': 'Gobernanza', 'why-c3-title': 'Infraestructura Basada en Políticas',
+      'why-c3-desc': 'Aplica reglas internas, aprobaciones y lógica de enrutamiento con consistencia en cada transacción y flujo de trabajo.',
+      'why-c4-tag': 'Conciliación', 'why-c4-title': 'Conciliación Clara',
+      'why-c4-desc': 'Reduce la ambigüedad operacional con registros estructurados y visibilidad completa de eventos desde el inicio hasta el cierre.',
+      'why-c5-tag': 'Despliegue', 'why-c5-title': 'Despliegue Empresarial',
+      'why-c5-desc': 'Integra a través de APIs y flujos estructurados sin reconstruir ni reemplazar los sistemas institucionales centrales.',
+      'why-c6-tag': 'Incorporación', 'why-c6-title': 'Incorporación Institucional Más Rápida',
+      'why-c6-desc': 'Acelera la preparación operacional con una plataforma diseñada para operaciones financieras reales y requisitos institucionales.',
+      'uc-tag': 'Casos de Uso',
+      'uc-heading': 'Diseñado para Flujos Institucionales de Alto Valor',
+      'uc-c1-tag': 'Cuentas por Pagar', 'uc-c1-title': 'Pagos transfronterizos a proveedores',
+      'uc-c1-desc': 'Coordina la ejecución global de cuentas por pagar con mayor control operacional y visibilidad completa entre jurisdicciones.',
+      'uc-c2-tag': 'Tesorería', 'uc-c2-title': 'Flujos de tesorería empresarial',
+      'uc-c2-desc': 'Soporta operaciones de tesorería que requieren movimiento estructurado entre jurisdicciones, monedas y contrapartes institucionales.',
+      'uc-c3-tag': 'Liquidación', 'uc-c3-title': 'Operaciones de liquidación institucional',
+      'uc-c3-desc': 'Habilita procesos de ejecución multipartita con enrutamiento más claro, gestión de estado y capacidades de conciliación.',
+      'uc-c4-tag': 'Desembolsos', 'uc-c4-title': 'Infraestructura de pago y desembolso',
+      'uc-c4-desc': 'Orquesta flujos salientes a gran escala mediante lógica operacional institucional y marcos de ejecución estructurados.',
+      'uc-c5-tag': 'Stablecoin', 'uc-c5-title': 'Flujos financieros habilitados con stablecoins',
+      'uc-c5-desc': 'Usa liquidez de stablecoins dentro de marcos de ejecución controlados y orientados a instituciones, para entornos regulados.',
+      'arch-tag': 'Arquitectura',
+      'arch-heading': 'Infraestructura Diseñada como Capa de Ejecución',
+      'arch-body': 'NAW está construido para operar como una capa de ejecución programable dentro de entornos institucionales, situándose sobre los sistemas centrales existentes para agregar estructura, gobernanza e inteligencia operacional a los flujos de trabajo transfronterizos.',
+      'arch-l1-title': 'Capa de Integración',
+      'arch-l1-desc': 'APIs y conectividad estructurada para entornos institucionales. Diseñada para integración segura y de baja fricción con sistemas existentes de banca y pagos.',
+      'arch-l2-title': 'Capa de Decisión',
+      'arch-l2-desc': 'Reglas, políticas, aprobaciones y condiciones de ejecución aplicadas consistentemente en el punto de procesamiento. Configurable según los requisitos de gobernanza de cada institución.',
+      'arch-l3-title': 'Capa de Coordinación',
+      'arch-l3-desc': 'Lógica de enrutamiento, coordinación de contrapartes y gestión del estado de transacciones. NAW mantiene la integridad de ejecución en flujos de múltiples tramos y partes.',
+      'arch-l4-title': 'Capa de Control',
+      'arch-l4-desc': 'Monitoreo, conciliación, informes y supervisión operacional. Cada estado de transacción visible con la claridad que demandan las operaciones institucionales.',
+      'diff-tag': 'Diferenciación',
+      'diff-heading': 'Más Que Procesamiento de Pagos',
+      'diff-sub': 'NAW no está diseñado como un simple paso de transacciones. Ofrece a las instituciones un marco de control sobre cómo las transacciones transfronterizas se estructuran, gobiernan, enrutan y cierran.',
+      'diff-old-label': 'Proveedores Tradicionales',
+      'diff-old-r1': 'Transmisión simple',
+      'diff-old-r2': 'Control limitado de flujos',
+      'diff-old-r3': 'Conciliación fragmentada',
+      'diff-old-r4': 'Lógica fuera de la capa operativa',
+      'diff-old-r5': 'Visibilidad fragmentada',
+      'diff-naw-label': 'NAW',
+      'diff-naw-r1': 'Marco de ejecución orquestado',
+      'diff-naw-r2': 'Control basado en políticas durante todo el ciclo de la transacción',
+      'diff-naw-r3': 'Gestión unificada y registros estructurados de eventos',
+      'diff-naw-r4': 'Lógica operacional integrada en cada etapa de ejecución',
+      'diff-naw-r5': 'Estado trazable desde el inicio hasta el cierre',
+      'gov-tag': 'Gobernanza',
+      'gov-heading': 'Diseñado con la Gobernanza en Mente',
+      'gov-sub': 'Las operaciones transfronterizas institucionales demandan controles estructurados, gestión de permisos, consistencia de datos y trazabilidad operacional.',
+      'gov-i1': 'Acceso y permisos basados en roles',
+      'gov-i2': 'Controles de gobernanza de flujos de trabajo',
+      'gov-i3': 'Datos de transacción estandarizados',
+      'gov-i4': 'Trazas de eventos listas para auditoría',
+      'gov-i5': 'Transparencia operacional en los pasos de ejecución',
+      'int-tag': 'Integración',
+      'int-heading': 'Desplegable en Entornos Institucionales Existentes',
+      'int-sub': 'NAW está diseñado para agregar una capa de orquestación a la infraestructura existente, sin reemplazarla.',
+      'int-c1-title': 'Integración por API',
+      'int-c1-desc': 'Conecta a través de APIs estructuradas para entornos institucionales. Seguras, bien documentadas y diseñadas para integración con sistemas de banca, pagos y tesorería.',
+      'int-c2-title': 'Capa de Flujo de Trabajo Operacional',
+      'int-c2-desc': 'Configura flujos de trabajo, políticas de enrutamiento y lógica de gobernanza sin reingeniería de la infraestructura subyacente. NAW se sitúa sobre los sistemas de ejecución.',
+      'int-c3-title': 'Soporte de Despliegue Estructurado',
+      'int-c3-desc': 'Procesos de incorporación y despliegue diseñados para instituciones con requisitos operacionales complejos y ecosistemas de socios existentes.',
+      'cta-tag': 'Comenzar',
+      'cta-headline': 'La infraestructura transfronteriza moderna necesita más que conectividad. Necesita control.',
+      'cta-body': 'NAW ofrece a las instituciones una capa operativa de nivel bancario para orquestar flujos de trabajo de stablecoins y fiat con más estructura, más visibilidad y mejor disciplina de ejecución.',
+      'cta-btn1': 'Contacta con el Equipo',
+      'cta-btn2': 'Contactar al Equipo',
+      'footer-copy': '© 2025 NAW. Todos los derechos reservados.',
+    }
+  };
+
+  /* ─── LANGUAGE TOGGLE LOGIC ───────────────────────────── */
+  let currentLang = 'en';
+
+  // Allowlist sanitizer: only <br> and <strong> permitted
+  function safeHTML(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
+      .replace(/&lt;strong&gt;/gi, '<strong>')
+      .replace(/&lt;\/strong&gt;/gi, '</strong>');
+  }
+
+  function setLang(lang) {
+    currentLang = lang;
+    const t = translations[lang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (t[key] !== undefined) el.innerHTML = safeHTML(t[key]);
+    });
+    // Update toggle button state (desktop + mobile)
+    document.getElementById('langEN').classList.toggle('active', lang === 'en');
+    document.getElementById('langES').classList.toggle('active', lang === 'es');
+    document.getElementById('mobileLangEN').classList.toggle('active', lang === 'en');
+    document.getElementById('mobileLangES').classList.toggle('active', lang === 'es');
+    // Update html lang attribute
+    document.documentElement.lang = lang;
+  }
+
+  document.getElementById('langToggle').addEventListener('click', () => {
+    setLang(currentLang === 'en' ? 'es' : 'en');
+  });
+  document.getElementById('mobileLangToggle').addEventListener('click', () => {
+    setLang(currentLang === 'en' ? 'es' : 'en');
+  });
+</script>
+</body>
+</html>
