@@ -1,0 +1,56 @@
+name: Website problem
+description: Something on the website is broken, wrong or out of date.
+labels: [bug]
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This repository is public. Everything you write here is public.**
+        Found a security problem? Don't open an issue. Report it privately, as `SECURITY.md` explains.
+  - type: input
+    id: page_url
+    attributes:
+      label: Page
+      description: The full address of the page.
+      placeholder: "https://"
+    validations:
+      required: true
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What's wrong
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: What you expected to see.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: How bad is it
+      options:
+        - Site down
+        - Wrong claim or broken link
+        - Cosmetic
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where
+      options:
+        - Live site
+        - Preview deploy
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Optional.
+  - type: input
+    id: device
+    attributes:
+      label: Browser and device
+      placeholder: Browser, device and screen size
